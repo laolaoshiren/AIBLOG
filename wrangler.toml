@@ -2,5 +2,7 @@ name = "aiblog"
 main = "src/index.js"
 compatibility_date = "2024-01-10"
 
-[site]
-bucket = "./public"
+[[d1_databases]]
+binding = "DB"
+database_name = "aiblog_db"
+database_id = "0a6169fd-11fa-46c7-b0b7-dd6e3efd72c8"

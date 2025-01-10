@@ -1,14 +1,18 @@
 {
   "name": "aiblog",
-  "version": "1.0.0",
+  "version": "0.0.0",
+  "private": true,
   "description": "A blog powered by AI and Cloudflare Workers",
   "main": "src/index.js",
   "scripts": {
+    "deploy": "wrangler deploy",
     "dev": "wrangler dev",
-    "deploy": "node deploy.js"
+    "db:create": "wrangler d1 create aiblog_db",
+    "db:migrate": "wrangler d1 execute aiblog_db --file=./schema.sql"
   },
   "dependencies": {
-    "hono": "^3.11.7"
+    "@tsndr/cloudflare-worker-jwt": "^2.3.2",
+    "hono": "^3.11.11"
   },
   "devDependencies": {
     "wrangler": "^3.22.1"
