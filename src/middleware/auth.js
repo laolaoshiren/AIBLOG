@@ -28,6 +28,30 @@ export async function auth(c, next) {
     }
 }
 
+export async function verifyToken(c, next) {
+    try {
+        const token = c.req.header('Authorization')?.replace('Bearer ', '');
+        
+        if (!token) {
+            return c.json({ error: 'No token provided' }, 401);
+        }
+
+        const isValid = await verify(token, SECRET);
+        
+        if (!isValid) {
+            return c.json({ error: 'Invalid token' }, 401);
+        }
+
+        // 解码 token 并添加到请求上下文
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        c.set('user', decoded);
+
+        await next();
+    } catch (error) {
+        return c.json({ error: 'Invalid token' }, 401);
+    }
+}
+
 export async function generateToken(user) {
     const payload = {
         id: user.id,

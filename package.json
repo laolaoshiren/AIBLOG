@@ -1,6 +1,6 @@
 {
   "name": "aiblog",
-  "version": "2.0.0-dev",
+  "version": "0.2.0",
   "private": true,
   "description": "A blog powered by AI and Cloudflare Workers",
   "main": "src/index.js",
