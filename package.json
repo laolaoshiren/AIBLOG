@@ -1,0 +1,16 @@
+{
+  "name": "aiblog",
+  "version": "1.0.0",
+  "description": "A blog powered by AI and Cloudflare Workers",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "hono": "^3.11.7"
+  },
+  "devDependencies": {
+    "wrangler": "^3.22.1"
+  }
+}
