@@ -4,3 +4,4 @@ node_modules/
 .wrangler/
 dist/
 .DS_Store
+!worker-version.txt
