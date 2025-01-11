@@ -420,6 +420,220 @@ const commonStyles = `
             padding: 1rem;
         }
     }
+
+    .page-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .page-description {
+        color: var(--text-secondary);
+    }
+
+    .archive-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .archive-year {
+        margin-bottom: 1rem;
+    }
+
+    .archive-year-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .archive-posts {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-left: 1.5rem;
+        border-left: 2px solid var(--border-color);
+    }
+
+    .archive-post {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        transition: background-color 0.2s;
+    }
+
+    .archive-post:hover {
+        background-color: var(--card-bg);
+    }
+
+    .archive-post-date {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        min-width: 100px;
+    }
+
+    .archive-post-title {
+        color: var(--text-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .archive-post-title:hover {
+        color: var(--primary-color);
+    }
+
+    .categories-list, .tags-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .category-card, .tag-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        transition: transform 0.2s, background-color 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .category-card:hover, .tag-card:hover {
+        transform: translateY(-2px);
+        background-color: var(--card-hover);
+    }
+
+    .category-name, .tag-name {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .category-count, .tag-count {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .post-detail {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .post-detail-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .post-detail-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+
+    .post-detail-meta {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .post-detail-meta i {
+        margin-right: 0.5rem;
+    }
+
+    .post-detail-content {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: var(--text-color);
+    }
+
+    .post-detail-content p {
+        margin-bottom: 1.5rem;
+    }
+
+    .post-detail-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .post-detail-content h1,
+    .post-detail-content h2,
+    .post-detail-content h3,
+    .post-detail-content h4,
+    .post-detail-content h5,
+    .post-detail-content h6 {
+        margin: 2rem 0 1rem;
+        color: var(--primary-color);
+    }
+
+    .post-detail-content a {
+        color: var(--primary-color);
+        text-decoration: none;
+        border-bottom: 1px solid var(--primary-color);
+    }
+
+    .post-detail-content a:hover {
+        opacity: 0.8;
+    }
+
+    .post-detail-content blockquote {
+        border-left: 4px solid var(--primary-color);
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        color: var(--text-secondary);
+    }
+
+    .post-detail-content code {
+        background-color: var(--tag-bg);
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-family: monospace;
+    }
+
+    .post-detail-content pre {
+        background-color: var(--tag-bg);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+    }
+
+    .post-detail-content pre code {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .post-detail-footer {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .post-detail-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
 `;
 
 const templates = {
@@ -487,9 +701,7 @@ const templates = {
                         </section>
                         <section class="widget">
                             <h3 class="widget-title">标签云</h3>
-                            <div class="tag-cloud" id="tagCloud">
-                                <!-- 标签云将通过 JavaScript 动态生成 -->
-                            </div>
+                            <div class="tag-cloud" id="tagCloud"></div>
                         </section>
                     </aside>
                 </main>
@@ -509,7 +721,7 @@ const templates = {
                         const imageMatch = post.content?.match(/!\\[.*?\\]\\((.*?)\\)/);
                         const imageUrl = imageMatch ? imageMatch[1] : null;
                         const contentWithoutImage = post.content?.replace(/!\\[.*?\\]\\(.*?\\)/, '').trim() || '';
-                        const excerpt = contentWithoutImage.slice(0, 100);
+                        const excerpt = post.excerpt || contentWithoutImage.slice(0, 100);
                         
                         return \`
                             <article class="post-card">
@@ -517,6 +729,7 @@ const templates = {
                                     <div class="post-meta">
                                         <span><i class="ri-calendar-line"></i>\${new Date(post.published_at).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\\//g, '-')}</span>
                                         <span><i class="ri-folder-line"></i>\${post.category || '无类别'}</span>
+                                        <span><i class="ri-eye-line"></i>\${post.views || 0} 次阅读</span>
                                     </div>
                                     <a href="/post/\${post.id}" class="post-title">\${post.title}</a>
                                     <p class="post-excerpt">\${excerpt}</p>
@@ -526,7 +739,7 @@ const templates = {
                                     <i class="ri-arrow-right-s-line post-arrow"></i>
                                 </div>
                                 \${imageUrl ? \`
-                                <div class="post-cover">
+                                <div class="post-image">
                                     <img src="\${imageUrl}" alt="\${post.title}" loading="lazy">
                                 </div>
                                 \` : ''}
@@ -534,6 +747,207 @@ const templates = {
                         \`;
                     }).join('');
 
+                    // 更新标签云
+                    const tagCloud = document.getElementById('tagCloud');
+                    if (tagCloud) {
+                        const allTags = posts.reduce((tags, post) => {
+                            if (Array.isArray(post.tags)) {
+                                post.tags.forEach(tag => {
+                                    tags[tag] = (tags[tag] || 0) + 1;
+                                });
+                            }
+                            return tags;
+                        }, {});
+
+                        tagCloud.innerHTML = Object.entries(allTags)
+                            .sort((a, b) => b[1] - a[1])
+                            .map(([tag, count]) => \`
+                                <a href="/tag/\${tag.toLowerCase()}" class="tag" title="\${count} 篇文章">
+                                    \${tag}
+                                </a>
+                            \`).join('');
+                    }
+
+                    // 更新分类列表
+                    const categoryList = document.getElementById('categoryList');
+                    if (categoryList) {
+                        const categories = posts.reduce((cats, post) => {
+                            const category = post.category || '未分类';
+                            cats[category] = (cats[category] || 0) + 1;
+                            return cats;
+                        }, {});
+
+                        categoryList.innerHTML = Object.entries(categories)
+                            .sort((a, b) => b[1] - a[1])
+                            .map(([category, count]) => \`
+                                <a href="/category/\${category}" class="category-item">
+                                    \${category}
+                                    <span class="count">\${count}</span>
+                                </a>
+                            \`).join('');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    const postsContainer = document.getElementById('postsContainer');
+                    if (postsContainer) {
+                        postsContainer.innerHTML = '<div class="error">加载文章失败，请稍后重试</div>';
+                    }
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', fetchPosts);
+            </script>
+        </body>
+        </html>`,
+    archives: `<!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>归档 - 岩浆块的博客</title>
+            <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+            <style>
+                ${commonStyles}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header class="header">
+                    <div class="header-content">
+                        <h1 class="site-title">岩浆块的博客</h1>
+                        <p class="site-description">记录学习与生活</p>
+                        <nav class="nav">
+                            <a href="/" class="nav-link"><i class="ri-home-line"></i>首页</a>
+                            <a href="/archives" class="nav-link"><i class="ri-archive-line"></i>归档</a>
+                            <a href="/categories" class="nav-link"><i class="ri-folder-line"></i>分类</a>
+                            <a href="/tags" class="nav-link"><i class="ri-price-tag-line"></i>标签</a>
+                            <a href="/about" class="nav-link"><i class="ri-user-line"></i>关于</a>
+                        </nav>
+                    </div>
+                </header>
+                <main class="main">
+                    <div class="content">
+                        <div class="page-header">
+                            <h1 class="page-title">文章归档</h1>
+                            <p class="page-description">共有 <span id="postCount">0</span> 篇文章</p>
+                        </div>
+                        <div class="archive-list" id="archiveList"></div>
+                    </div>
+                </main>
+            </div>
+            <script>
+            async function fetchArchives() {
+                try {
+                    const response = await fetch('/api/posts');
+                    if (!response.ok) throw new Error('Failed to fetch posts');
+                    const posts = await response.json();
+                    
+                    document.getElementById('postCount').textContent = posts.length;
+                    
+                    const archiveList = document.getElementById('archiveList');
+                    const postsByYear = {};
+                    
+                    posts.forEach(post => {
+                        const year = new Date(post.published_at).getFullYear();
+                        if (!postsByYear[year]) {
+                            postsByYear[year] = [];
+                        }
+                        postsByYear[year].push(post);
+                    });
+                    
+                    const sortedYears = Object.keys(postsByYear).sort((a, b) => b - a);
+                    
+                    archiveList.innerHTML = sortedYears.map(year => \`
+                        <div class="archive-year">
+                            <h2 class="archive-year-title">\${year}</h2>
+                            <div class="archive-posts">
+                                \${postsByYear[year]
+                                    .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+                                    .map(post => \`
+                                        <div class="archive-post">
+                                            <span class="archive-post-date">
+                                                \${new Date(post.published_at).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }).replace(/\\//g, '-')}
+                                            </span>
+                                            <a href="/post/\${post.id}" class="archive-post-title">\${post.title}</a>
+                                        </div>
+                                    \`).join('')}
+                            </div>
+                        </div>
+                    \`).join('');
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('archiveList').innerHTML = '<div class="error-message">加载归档失败</div>';
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', fetchArchives);
+            </script>
+        </body>
+        </html>`,
+    post: `<!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{{title}} - 岩浆块的博客</title>
+            <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+            <style>
+                ${commonStyles}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header class="header">
+                    <div class="header-content">
+                        <h1 class="site-title">岩浆块的博客</h1>
+                        <p class="site-description">记录学习与生活</p>
+                        <nav class="nav">
+                            <a href="/" class="nav-link"><i class="ri-home-line"></i>首页</a>
+                            <a href="/archives" class="nav-link"><i class="ri-archive-line"></i>归档</a>
+                            <a href="/categories" class="nav-link"><i class="ri-folder-line"></i>分类</a>
+                            <a href="/tags" class="nav-link"><i class="ri-price-tag-line"></i>标签</a>
+                            <a href="/about" class="nav-link"><i class="ri-user-line"></i>关于</a>
+                        </nav>
+                    </div>
+                </header>
+                <main class="main">
+                    <article class="post-detail">
+                        <header class="post-detail-header">
+                            <h1 class="post-detail-title">{{title}}</h1>
+                            <div class="post-detail-meta">
+                                <span><i class="ri-calendar-line"></i>{{published_at}}</span>
+                                <span><i class="ri-folder-line"></i>{{category}}</span>
+                                <span><i class="ri-eye-line"></i>{{views}} 阅读</span>
+                            </div>
+                        </header>
+                        <div class="post-detail-content">
+                            {{content}}
+                        </div>
+                        <footer class="post-detail-footer">
+                            <div class="post-detail-tags">
+                                {{tags}}
+                            </div>
+                        </footer>
+                    </article>
+                    <aside class="sidebar">
+                        <section class="widget">
+                            <h3 class="widget-title">最新文章</h3>
+                            <div class="recent-posts" id="recentPosts"></div>
+                        </section>
+                        <section class="widget">
+                            <h3 class="widget-title">标签云</h3>
+                            <div class="tag-cloud" id="tagCloud"></div>
+                        </section>
+                    </aside>
+                </main>
+            </div>
+            <script>
+            async function fetchSidebarData() {
+                try {
+                    const response = await fetch('/api/posts');
+                    if (!response.ok) throw new Error('Failed to fetch posts');
+                    const posts = await response.json();
+                    
                     // 更新最新文章列表
                     const recentPosts = document.getElementById('recentPosts');
                     if (recentPosts) {
@@ -573,14 +987,10 @@ const templates = {
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    const postsContainer = document.getElementById('postsContainer');
-                    if (postsContainer) {
-                        postsContainer.innerHTML = '<div class="error-message">加载文章失败</div>';
-                    }
                 }
             }
 
-            document.addEventListener('DOMContentLoaded', fetchPosts);
+            document.addEventListener('DOMContentLoaded', fetchSidebarData);
             </script>
         </body>
         </html>`

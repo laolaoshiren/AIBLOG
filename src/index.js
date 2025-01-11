@@ -1,142 +1,118 @@
 import { Hono } from 'hono';
-import { getTemplate } from './utils/template';
+import { cors } from 'hono/cors';
 import { Post } from './models/Post';
-import { User } from './models/User';
-import { verifyToken } from './middleware/auth';
+import { marked } from 'marked';
+import { getTemplate } from './utils/template';
 
 const app = new Hono();
 
-// 前台 API
-app.get('/', (c) => {
-    return c.html(getTemplate('index'))
-});
+app.use('*', cors());
 
+app.get('/', (c) => c.html(getTemplate('index')));
+
+// API 路由
 app.get('/api/posts', async (c) => {
-    const { DB } = c.env;
     try {
-        const posts = await DB.prepare(`
-            SELECT 
-                p.*,
-                u.username as author_name,
-                GROUP_CONCAT(t.name) as tags,
-                pm.views_count,
-                pm.likes_count,
-                pm.reading_time
-            FROM posts p
-            LEFT JOIN users u ON p.author_id = u.id
-            LEFT JOIN post_tags pt ON p.id = pt.post_id
-            LEFT JOIN tags t ON pt.tag_id = t.id
-            LEFT JOIN post_metadata pm ON p.id = pm.post_id
-            WHERE p.status = 'published'
-            GROUP BY p.id
-            ORDER BY p.published_at DESC
-        `).all();
-
-        // 处理每篇文章的标签
-        const processedPosts = posts.results.map(post => ({
-            ...post,
-            tags: post.tags ? post.tags.split(',') : []
-        }));
-
-        return c.json(processedPosts);
+        const posts = await Post.findAll(c.env.DB);
+        if (!posts) {
+            throw new Error('No posts found');
+        }
+        return c.json(posts);
     } catch (error) {
-        console.error('Error fetching posts:', error);
-        return c.json({ error: 'Failed to fetch posts' }, 500);
+        console.error('Error fetching posts:', error.message, error.stack);
+        return c.json({ error: error.message || 'Failed to fetch posts' }, 500);
     }
 });
 
-// 管理后台 API
-app.get('/admin', (c) => {
-    return c.html(getTemplate('admin'));
-});
-
-app.post('/api/auth/login', async (c) => {
-    const { username, password } = await c.req.json();
-    const user = new User(c.env.DB);
-    const token = await user.login(username, password);
-    
-    if (token) {
-        return c.json({ token });
-    }
-    return c.json({ error: 'Invalid credentials' }, 401);
-});
-
-// 需要认证的 API
-app.post('/api/admin/posts', verifyToken, async (c) => {
-    const post = new Post(c.env.DB);
-    const data = await c.req.json();
-    const result = await post.create(data);
-    return c.json(result);
-});
-
-app.put('/api/admin/posts/:id', verifyToken, async (c) => {
-    const post = new Post(c.env.DB);
-    const id = c.req.param('id');
-    const data = await c.req.json();
-    const result = await post.update(id, data);
-    return c.json(result);
-});
-
-app.delete('/api/admin/posts/:id', verifyToken, async (c) => {
-    const post = new Post(c.env.DB);
-    const id = c.req.param('id');
-    const result = await post.delete(id);
-    return c.json(result);
-});
-
-// 标签相关 API
-app.get('/api/tags', async (c) => {
-    const { DB } = c.env;
+app.get('/api/posts/:id', async (c) => {
     try {
-        const tags = await DB.prepare(`
-            SELECT t.*, COUNT(pt.post_id) as post_count
-            FROM tags t
-            LEFT JOIN post_tags pt ON t.id = pt.tag_id
-            GROUP BY t.id
-            ORDER BY post_count DESC
-        `).all();
-        return c.json(tags.results);
+        const id = c.req.param('id');
+        const post = await Post.findById(c.env.DB, id);
+        if (!post) {
+            return c.json({ error: 'Post not found' }, 404);
+        }
+        return c.json(post);
     } catch (error) {
-        console.error('Error fetching tags:', error);
-        return c.json({ error: 'Failed to fetch tags' }, 500);
+        console.error('Error fetching post:', error.message, error.stack);
+        return c.json({ error: error.message || 'Failed to fetch post' }, 500);
     }
 });
 
-// 评论相关 API
-app.get('/api/posts/:id/comments', async (c) => {
-    const { DB } = c.env;
-    const postId = c.req.param('id');
+app.get('/api/tags/:tag/posts', async (c) => {
     try {
-        const comments = await DB.prepare(`
-            SELECT *
-            FROM comments
-            WHERE post_id = ?
-            AND status = 'approved'
-            ORDER BY created_at DESC
-        `).bind(postId).all();
-        return c.json(comments.results);
+        const tag = c.req.param('tag');
+        const posts = await Post.findByTag(c.env.DB, tag);
+        return c.json(posts);
     } catch (error) {
-        console.error('Error fetching comments:', error);
-        return c.json({ error: 'Failed to fetch comments' }, 500);
+        console.error('Error fetching posts by tag:', error.message, error.stack);
+        return c.json({ error: error.message || 'Failed to fetch posts' }, 500);
     }
 });
 
-app.post('/api/posts/:id/comments', async (c) => {
-    const { DB } = c.env;
-    const postId = c.req.param('id');
-    const { author_name, author_email, content } = await c.req.json();
-    
+app.get('/api/categories/:category/posts', async (c) => {
     try {
-        const result = await DB.prepare(`
-            INSERT INTO comments (post_id, author_name, author_email, content)
-            VALUES (?, ?, ?, ?)
-        `).bind(postId, author_name, author_email, content).run();
+        const category = c.req.param('category');
+        const posts = await Post.findByCategory(c.env.DB, category);
+        return c.json(posts);
+    } catch (error) {
+        console.error('Error fetching posts by category:', error.message, error.stack);
+        return c.json({ error: error.message || 'Failed to fetch posts' }, 500);
+    }
+});
+
+// 页面路由
+app.get('/archives', async (c) => {
+    return c.html(getTemplate('archives'));
+});
+
+app.get('/post/:id', async (c) => {
+    try {
+        const id = c.req.param('id');
+        const post = await Post.findById(c.env.DB, id);
         
-        return c.json({ success: true, id: result.lastRowId });
+        if (!post) {
+            return c.notFound();
+        }
+
+        // 将 Markdown 转换为 HTML
+        const content = marked.parse(post.content);
+        
+        // 格式化日期
+        const published_at = new Date(post.published_at).toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).replace(/\//g, '-');
+
+        // 格式化标签
+        const tags = Array.isArray(post.tags) 
+            ? post.tags.map(tag => `<a href="/tag/${tag.toLowerCase()}" class="tag">${tag}</a>`).join('')
+            : '';
+
+        // 替换模板中的占位符
+        let html = getTemplate('post')
+            .replace(/{{title}}/g, post.title)
+            .replace(/{{published_at}}/g, published_at)
+            .replace(/{{category}}/g, post.category || '无类别')
+            .replace(/{{content}}/g, content)
+            .replace(/{{tags}}/g, tags)
+            .replace(/{{views}}/g, post.views || 0);
+
+        return c.html(html);
     } catch (error) {
-        console.error('Error creating comment:', error);
-        return c.json({ error: 'Failed to create comment' }, 500);
+        console.error('Error fetching post:', error.message, error.stack);
+        return c.text('Failed to fetch post', 500);
     }
+});
+
+app.get('/tag/:tag', async (c) => {
+    const tag = c.req.param('tag');
+    return c.html(getTemplate('tag').replace('{{tag}}', tag));
+});
+
+app.get('/category/:category', async (c) => {
+    const category = c.req.param('category');
+    return c.html(getTemplate('category').replace('{{category}}', category));
 });
 
 export default app;
