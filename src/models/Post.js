@@ -9,16 +9,34 @@ export class Post {
     }
 
     static async findById(db, id) {
-        const stmt = db.prepare('SELECT * FROM posts WHERE id = ? AND status = ?');
-        const { results } = await stmt.bind(id, 'published').first();
-        if (results && results[0]) {
+        try {
+            console.log(`Fetching post with id: ${id}`);
+            const stmt = db.prepare('SELECT * FROM posts WHERE id = ? AND status = ?');
+            const { results } = await stmt.bind(id, 'published').all();
+            console.log('Query results:', results);
+            
+            if (!results || results.length === 0) {
+                console.log('No post found');
+                return null;
+            }
+
             const post = results[0];
             post.tags = post.tags ? JSON.parse(post.tags) : [];
-            const updateStmt = db.prepare('UPDATE posts SET views = COALESCE(views, 0) + 1 WHERE id = ?');
-            await updateStmt.bind(id).run();
+            
+            // 更新浏览量
+            try {
+                const updateStmt = db.prepare('UPDATE posts SET views = COALESCE(views, 0) + 1 WHERE id = ?');
+                await updateStmt.bind(id).run();
+            } catch (updateError) {
+                console.error('Error updating views:', updateError);
+                // 继续执行，不影响文章显示
+            }
+            
             return post;
+        } catch (error) {
+            console.error('Error in findById:', error);
+            throw error;
         }
-        return null;
     }
 
     static async findByTag(db, tag) {

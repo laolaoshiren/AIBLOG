@@ -65,17 +65,34 @@ app.get('/archives', async (c) => {
     return c.html(getTemplate('archives'));
 });
 
+app.get('/categories', async (c) => {
+    return c.html(getTemplate('categories'));
+});
+
+app.get('/tags', async (c) => {
+    return c.html(getTemplate('tags'));
+});
+
+app.get('/about', async (c) => {
+    return c.html(getTemplate('about'));
+});
+
 app.get('/post/:id', async (c) => {
     try {
         const id = c.req.param('id');
+        console.log('Fetching post with ID:', id);
+        
         const post = await Post.findById(c.env.DB, id);
+        console.log('Found post:', post);
         
         if (!post) {
-            return c.notFound();
+            console.log('Post not found, returning 404');
+            return c.html(getTemplate('404').replace('{{message}}', '文章不存在'), 404);
         }
 
         // 将 Markdown 转换为 HTML
         const content = marked.parse(post.content);
+        console.log('Markdown parsed successfully');
         
         // 格式化日期
         const published_at = new Date(post.published_at).toLocaleDateString('zh-CN', {
@@ -98,21 +115,50 @@ app.get('/post/:id', async (c) => {
             .replace(/{{tags}}/g, tags)
             .replace(/{{views}}/g, post.views || 0);
 
+        console.log('Template rendered successfully');
         return c.html(html);
     } catch (error) {
-        console.error('Error fetching post:', error.message, error.stack);
-        return c.text('Failed to fetch post', 500);
+        console.error('Error in post detail route:', error);
+        return c.html(getTemplate('500').replace('{{message}}', '服务器错误'), 500);
     }
 });
 
 app.get('/tag/:tag', async (c) => {
-    const tag = c.req.param('tag');
-    return c.html(getTemplate('tag').replace('{{tag}}', tag));
+    try {
+        const tag = c.req.param('tag');
+        console.log('Fetching tag page for:', tag);
+        
+        // 检查标签是否存在
+        const posts = await Post.findByTag(c.env.DB, tag);
+        if (!posts || posts.length === 0) {
+            console.log('Tag not found, returning 404');
+            return c.html(getTemplate('404').replace('{{message}}', '该标签不存在'), 404);
+        }
+        
+        return c.html(getTemplate('tag').replace(/{{tag}}/g, tag));
+    } catch (error) {
+        console.error('Error in tag route:', error);
+        return c.html(getTemplate('500').replace('{{message}}', '服务器错误'), 500);
+    }
 });
 
 app.get('/category/:category', async (c) => {
-    const category = c.req.param('category');
-    return c.html(getTemplate('category').replace('{{category}}', category));
+    try {
+        const category = c.req.param('category');
+        console.log('Fetching category page for:', category);
+        
+        // 检查分类是否存在
+        const posts = await Post.findByCategory(c.env.DB, category);
+        if (!posts || posts.length === 0) {
+            console.log('Category not found, returning 404');
+            return c.html(getTemplate('404').replace('{{message}}', '该分类不存在'), 404);
+        }
+        
+        return c.html(getTemplate('category').replace(/{{category}}/g, category));
+    } catch (error) {
+        console.error('Error in category route:', error);
+        return c.html(getTemplate('500').replace('{{message}}', '服务器错误'), 500);
+    }
 });
 
 export default app;
