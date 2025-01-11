@@ -642,16 +642,744 @@ const templates = {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>博客管理后台</title>
+            <title>后台管理 - 岩浆块的博客</title>
             <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
             <style>
-                ${commonStyles}
+                :root {
+                    --primary-color: #3498db;
+                    --danger-color: #e74c3c;
+                    --success-color: #2ecc71;
+                    --warning-color: #f1c40f;
+                    --text-color: #2c3e50;
+                    --text-secondary: #7f8c8d;
+                    --bg-color: #f5f6fa;
+                    --card-bg: #ffffff;
+                    --border-color: #dcdde1;
+                    --sidebar-width: 240px;
+                }
+
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                    line-height: 1.6;
+                    color: var(--text-color);
+                    background: var(--bg-color);
+                }
+
+                .admin-container {
+                    display: flex;
+                    min-height: 100vh;
+                }
+
+                .sidebar {
+                    width: var(--sidebar-width);
+                    background: var(--card-bg);
+                    border-right: 1px solid var(--border-color);
+                    padding: 2rem 0;
+                    position: fixed;
+                    height: 100vh;
+                    overflow-y: auto;
+                }
+
+                .sidebar-header {
+                    padding: 0 1.5rem 2rem;
+                    border-bottom: 1px solid var(--border-color);
+                }
+
+                .sidebar-title {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: var(--text-color);
+                    margin-bottom: 0.5rem;
+                }
+
+                .sidebar-subtitle {
+                    font-size: 0.875rem;
+                    color: var(--text-secondary);
+                }
+
+                .nav-menu {
+                    padding: 1.5rem 0;
+                }
+
+                .nav-item {
+                    padding: 0.75rem 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    color: var(--text-color);
+                    text-decoration: none;
+                    transition: all 0.2s;
+                }
+
+                .nav-item:hover,
+                .nav-item.active {
+                    background: var(--bg-color);
+                    color: var(--primary-color);
+                }
+
+                .nav-item i {
+                    margin-right: 0.75rem;
+                    font-size: 1.25rem;
+                }
+
+                .main-content {
+                    flex: 1;
+                    margin-left: var(--sidebar-width);
+                    padding: 2rem;
+                }
+
+                .page-header {
+                    margin-bottom: 2rem;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .page-title {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                }
+
+                .btn {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.375rem;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 0.875rem;
+                    transition: all 0.2s;
+                }
+
+                .btn i {
+                    margin-right: 0.5rem;
+                }
+
+                .btn-primary {
+                    background: var(--primary-color);
+                    color: white;
+                }
+
+                .btn-primary:hover {
+                    opacity: 0.9;
+                }
+
+                .stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1.5rem;
+                    margin-bottom: 2rem;
+                }
+
+                .stat-card {
+                    background: var(--card-bg);
+                    border-radius: 0.5rem;
+                    padding: 1.5rem;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                }
+
+                .stat-title {
+                    font-size: 0.875rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 0.5rem;
+                }
+
+                .stat-value {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    color: var(--text-color);
+                }
+
+                .stat-icon {
+                    float: right;
+                    font-size: 2rem;
+                    color: var(--primary-color);
+                    opacity: 0.2;
+                }
             </style>
         </head>
         <body>
-            <div class="container">
-                <h1>博客管理后台</h1>
+            <div class="admin-container">
+                <aside class="sidebar">
+                    <div class="sidebar-header">
+                        <h1 class="sidebar-title">博客管理系统</h1>
+                        <p class="sidebar-subtitle">管理你的博客内容</p>
+                    </div>
+                    <nav class="nav-menu">
+                        <a href="/admin" class="nav-item active">
+                            <i class="ri-dashboard-line"></i>
+                            仪表盘
+                        </a>
+                        <a href="/admin/posts" class="nav-item">
+                            <i class="ri-article-line"></i>
+                            文章管理
+                        </a>
+                        <a href="/admin/categories" class="nav-item">
+                            <i class="ri-folder-line"></i>
+                            分类管理
+                        </a>
+                        <a href="/admin/tags" class="nav-item">
+                            <i class="ri-price-tag-line"></i>
+                            标签管理
+                        </a>
+                        <a href="/admin/settings" class="nav-item">
+                            <i class="ri-settings-line"></i>
+                            网站设置
+                        </a>
+                        <a href="javascript:void(0)" onclick="logout()" class="nav-item">
+                            <i class="ri-logout-box-line"></i>
+                            退出登录
+                        </a>
+                    </nav>
+                </aside>
+                <main class="main-content">
+                    <div class="page-header">
+                        <h2 class="page-title">仪表盘</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="ri-article-line stat-icon"></i>
+                            <div class="stat-title">文章总数</div>
+                            <div class="stat-value" id="totalPosts">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="ri-folder-line stat-icon"></i>
+                            <div class="stat-title">分类总数</div>
+                            <div class="stat-value" id="totalCategories">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="ri-price-tag-line stat-icon"></i>
+                            <div class="stat-title">标签总数</div>
+                            <div class="stat-value" id="totalTags">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="ri-eye-line stat-icon"></i>
+                            <div class="stat-title">总访问量</div>
+                            <div class="stat-value" id="totalViews">0</div>
+                        </div>
+                    </div>
+                </main>
             </div>
+            <script>
+            // 检查登录状态
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                window.location.href = '/admin/login';
+            }
+
+            // 加载统计数据
+            async function loadDashboard() {
+                try {
+                    const response = await fetch('/api/posts');
+                    const posts = await response.json();
+                    
+                    // 更新统计数据
+                    document.getElementById('totalPosts').textContent = posts.length;
+                    
+                    // 统计分类
+                    const categories = new Set(posts.map(post => post.category));
+                    document.getElementById('totalCategories').textContent = categories.size;
+                    
+                    // 统计标签
+                    const tags = new Set(posts.flatMap(post => 
+                        Array.isArray(post.tags) ? post.tags : []
+                    ));
+                    document.getElementById('totalTags').textContent = tags.size;
+                    
+                    // 统计总访问量
+                    const totalViews = posts.reduce((sum, post) => sum + (post.views || 0), 0);
+                    document.getElementById('totalViews').textContent = totalViews;
+                } catch (error) {
+                    console.error('Error loading dashboard:', error);
+                }
+            }
+
+            // 退出登录
+            function logout() {
+                localStorage.removeItem('admin_token');
+                window.location.href = '/admin/login';
+            }
+
+            // 初始加载
+            loadDashboard();
+            </script>
+        </body>
+        </html>`,
+    posts: `<!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>文章管理 - 岩浆块的博客</title>
+            <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+            <style>
+                /* 复用之前的样式变量和基础样式 */
+                :root {
+                    --primary-color: #3498db;
+                    --danger-color: #e74c3c;
+                    --success-color: #2ecc71;
+                    --warning-color: #f1c40f;
+                    --text-color: #2c3e50;
+                    --text-secondary: #7f8c8d;
+                    --bg-color: #f5f6fa;
+                    --card-bg: #ffffff;
+                    --border-color: #dcdde1;
+                    --sidebar-width: 240px;
+                }
+
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                    line-height: 1.6;
+                    color: var(--text-color);
+                    background: var(--bg-color);
+                }
+
+                .admin-container {
+                    display: flex;
+                    min-height: 100vh;
+                }
+
+                /* 复用之前的侧边栏样式 */
+                .sidebar {
+                    width: var(--sidebar-width);
+                    background: var(--card-bg);
+                    border-right: 1px solid var(--border-color);
+                    padding: 2rem 0;
+                    position: fixed;
+                    height: 100vh;
+                    overflow-y: auto;
+                }
+
+                .sidebar-header {
+                    padding: 0 1.5rem 2rem;
+                    border-bottom: 1px solid var(--border-color);
+                }
+
+                .sidebar-title {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: var(--text-color);
+                    margin-bottom: 0.5rem;
+                }
+
+                .sidebar-subtitle {
+                    font-size: 0.875rem;
+                    color: var(--text-secondary);
+                }
+
+                .nav-menu {
+                    padding: 1.5rem 0;
+                }
+
+                .nav-item {
+                    padding: 0.75rem 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    color: var(--text-color);
+                    text-decoration: none;
+                    transition: all 0.2s;
+                }
+
+                .nav-item:hover,
+                .nav-item.active {
+                    background: var(--bg-color);
+                    color: var(--primary-color);
+                }
+
+                .nav-item i {
+                    margin-right: 0.75rem;
+                    font-size: 1.25rem;
+                }
+
+                .main-content {
+                    flex: 1;
+                    margin-left: var(--sidebar-width);
+                    padding: 2rem;
+                }
+
+                .page-header {
+                    margin-bottom: 2rem;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .page-title {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                }
+
+                /* 文章管理特定样式 */
+                .posts-toolbar {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 1.5rem;
+                }
+
+                .search-box {
+                    display: flex;
+                    gap: 0.5rem;
+                }
+
+                .search-input {
+                    padding: 0.5rem 1rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 0.375rem;
+                    font-size: 0.875rem;
+                    width: 300px;
+                }
+
+                .btn {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.375rem;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 0.875rem;
+                    transition: all 0.2s;
+                }
+
+                .btn i {
+                    margin-right: 0.5rem;
+                }
+
+                .btn-primary {
+                    background: var(--primary-color);
+                    color: white;
+                }
+
+                .btn-primary:hover {
+                    opacity: 0.9;
+                }
+
+                .posts-table {
+                    width: 100%;
+                    background: var(--card-bg);
+                    border-radius: 0.5rem;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    overflow: hidden;
+                }
+
+                .posts-table table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                .posts-table th,
+                .posts-table td {
+                    padding: 1rem;
+                    text-align: left;
+                    border-bottom: 1px solid var(--border-color);
+                }
+
+                .posts-table th {
+                    background: var(--bg-color);
+                    font-weight: 600;
+                    color: var(--text-secondary);
+                }
+
+                .posts-table tr:last-child td {
+                    border-bottom: none;
+                }
+
+                .posts-table tr:hover {
+                    background: var(--bg-color);
+                }
+
+                .tag {
+                    display: inline-block;
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 0.25rem;
+                    background: var(--bg-color);
+                    color: var(--text-secondary);
+                    font-size: 0.75rem;
+                    margin-right: 0.5rem;
+                }
+
+                .action-btn {
+                    padding: 0.25rem;
+                    border-radius: 0.25rem;
+                    border: none;
+                    cursor: pointer;
+                    color: var(--text-secondary);
+                    background: none;
+                    transition: all 0.2s;
+                }
+
+                .action-btn:hover {
+                    color: var(--primary-color);
+                    background: var(--bg-color);
+                }
+
+                .action-btn.delete:hover {
+                    color: var(--danger-color);
+                }
+
+                .pagination {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-top: 2rem;
+                    gap: 0.5rem;
+                }
+
+                .page-btn {
+                    padding: 0.5rem 1rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 0.375rem;
+                    background: var(--card-bg);
+                    color: var(--text-color);
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+
+                .page-btn:hover,
+                .page-btn.active {
+                    background: var(--primary-color);
+                    color: white;
+                    border-color: var(--primary-color);
+                }
+
+                .page-btn:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="admin-container">
+                <aside class="sidebar">
+                    <div class="sidebar-header">
+                        <h1 class="sidebar-title">博客管理系统</h1>
+                        <p class="sidebar-subtitle">管理你的博客内容</p>
+                    </div>
+                    <nav class="nav-menu">
+                        <a href="/admin" class="nav-item">
+                            <i class="ri-dashboard-line"></i>
+                            仪表盘
+                        </a>
+                        <a href="/admin/posts" class="nav-item active">
+                            <i class="ri-article-line"></i>
+                            文章管理
+                        </a>
+                        <a href="/admin/categories" class="nav-item">
+                            <i class="ri-folder-line"></i>
+                            分类管理
+                        </a>
+                        <a href="/admin/tags" class="nav-item">
+                            <i class="ri-price-tag-line"></i>
+                            标签管理
+                        </a>
+                        <a href="/admin/settings" class="nav-item">
+                            <i class="ri-settings-line"></i>
+                            网站设置
+                        </a>
+                        <a href="javascript:void(0)" onclick="logout()" class="nav-item">
+                            <i class="ri-logout-box-line"></i>
+                            退出登录
+                        </a>
+                    </nav>
+                </aside>
+                <main class="main-content">
+                    <div class="page-header">
+                        <h2 class="page-title">文章管理</h2>
+                        <button class="btn btn-primary" onclick="createPost()">
+                            <i class="ri-add-line"></i>
+                            新建文章
+                        </button>
+                    </div>
+                    <div class="posts-toolbar">
+                        <div class="search-box">
+                            <input type="text" class="search-input" placeholder="搜索文章标题..." id="searchInput">
+                            <button class="btn btn-primary" onclick="searchPosts()">
+                                <i class="ri-search-line"></i>
+                                搜索
+                            </button>
+                        </div>
+                    </div>
+                    <div class="posts-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>标题</th>
+                                    <th>分类</th>
+                                    <th>标签</th>
+                                    <th>发布时间</th>
+                                    <th>访问量</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="postsTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination"></div>
+                </main>
+            </div>
+            <script>
+            // 检查登录状态
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                window.location.href = '/admin/login';
+            }
+
+            let currentPage = 1;
+            const postsPerPage = 10;
+            let allPosts = [];
+            let filteredPosts = [];
+
+            // 加载文章列表
+            async function loadPosts() {
+                try {
+                    const response = await fetch('/api/posts');
+                    allPosts = await response.json();
+                    filteredPosts = [...allPosts];
+                    displayPosts();
+                    updatePagination();
+                } catch (error) {
+                    console.error('Error loading posts:', error);
+                }
+            }
+
+            // 显示文章
+            function displayPosts() {
+                const startIndex = (currentPage - 1) * postsPerPage;
+                const endIndex = startIndex + postsPerPage;
+                const postsToShow = filteredPosts.slice(startIndex, endIndex);
+                
+                const tbody = document.getElementById('postsTableBody');
+                tbody.innerHTML = postsToShow.map(post => \`
+                    <tr>
+                        <td>\${post.title}</td>
+                        <td>\${post.category || '无分类'}</td>
+                        <td>\${Array.isArray(post.tags) ? post.tags.map(tag => 
+                            \`<span class="tag">\${tag}</span>\`).join('') : ''}</td>
+                        <td>\${new Date(post.published_at).toLocaleDateString('zh-CN')}</td>
+                        <td>\${post.views || 0}</td>
+                        <td>\${post.status === 'published' ? '已发布' : '草稿'}</td>
+                        <td>
+                            <button class="action-btn" onclick="editPost(\${post.id})">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deletePost(\${post.id})">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </td>
+                    </tr>
+                \`).join('');
+            }
+
+            // 更新分页
+            function updatePagination() {
+                const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+                const pagination = document.getElementById('pagination');
+                
+                let paginationHtml = \`
+                    <button class="page-btn" \${currentPage === 1 ? 'disabled' : ''} 
+                            onclick="changePage(\${currentPage - 1})">
+                        <i class="ri-arrow-left-s-line"></i>
+                    </button>
+                \`;
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += \`
+                        <button class="page-btn \${currentPage === i ? 'active' : ''}" 
+                                onclick="changePage(\${i})">\${i}</button>
+                    \`;
+                }
+                
+                paginationHtml += \`
+                    <button class="page-btn" \${currentPage === totalPages ? 'disabled' : ''} 
+                            onclick="changePage(\${currentPage + 1})">
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                \`;
+                
+                pagination.innerHTML = paginationHtml;
+            }
+
+            // 切换页面
+            function changePage(page) {
+                if (page < 1 || page > Math.ceil(filteredPosts.length / postsPerPage)) return;
+                currentPage = page;
+                displayPosts();
+                updatePagination();
+            }
+
+            // 搜索文章
+            function searchPosts() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                filteredPosts = allPosts.filter(post => 
+                    post.title.toLowerCase().includes(searchTerm) ||
+                    post.category?.toLowerCase().includes(searchTerm) ||
+                    (Array.isArray(post.tags) && post.tags.some(tag => 
+                        tag.toLowerCase().includes(searchTerm)
+                    ))
+                );
+                currentPage = 1;
+                displayPosts();
+                updatePagination();
+            }
+
+            // 新建文章
+            function createPost() {
+                // TODO: 实现新建文章功能
+                console.log('Create new post');
+            }
+
+            // 编辑文章
+            function editPost(id) {
+                // TODO: 实现编辑文章功能
+                console.log('Edit post:', id);
+            }
+
+            // 删除文章
+            async function deletePost(id) {
+                if (!confirm('确定要删除这篇文章吗？')) return;
+                
+                try {
+                    const response = await fetch(\`/api/admin/posts/\${id}\`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': \`Bearer \${token}\`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        loadPosts();
+                    } else {
+                        throw new Error('Failed to delete post');
+                    }
+                } catch (error) {
+                    console.error('Error deleting post:', error);
+                }
+            }
+
+            // 退出登录
+            function logout() {
+                localStorage.removeItem('admin_token');
+                window.location.href = '/admin/login';
+            }
+
+            // 监听搜索框输入
+            document.getElementById('searchInput').addEventListener('input', searchPosts);
+
+            // 初始加载
+            loadPosts();
+            </script>
         </body>
         </html>`,
     index: `<!DOCTYPE html>
@@ -1854,6 +2582,543 @@ const templates = {
                     </div>
                 </main>
             </div>
+        </body>
+        </html>`,
+    login: `<!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>后台登录 - 岩浆块的博客</title>
+            <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+            <style>
+                ${commonStyles}
+                .login-container {
+                    max-width: 400px;
+                    margin: 100px auto;
+                    padding: 2rem;
+                    background: var(--card-bg);
+                    border-radius: 1rem;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+                .login-title {
+                    text-align: center;
+                    margin-bottom: 2rem;
+                    color: var(--primary-color);
+                }
+                .login-form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+                .form-group label {
+                    color: var(--text-color);
+                    font-weight: 500;
+                }
+                .form-group input {
+                    padding: 0.75rem 1rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 0.5rem;
+                    background: var(--bg-color);
+                    color: var(--text-color);
+                }
+                .login-btn {
+                    background: var(--primary-color);
+                    color: white;
+                    padding: 0.75rem;
+                    border: none;
+                    border-radius: 0.5rem;
+                    cursor: pointer;
+                    font-weight: 500;
+                    transition: opacity 0.2s;
+                }
+                .login-btn:hover {
+                    opacity: 0.9;
+                }
+                .error-message {
+                    color: #dc2626;
+                    text-align: center;
+                    margin-top: 1rem;
+                    display: none;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="login-container">
+                    <h1 class="login-title">后台登录</h1>
+                    <form class="login-form" id="loginForm">
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="login-btn">登录</button>
+                        <div class="error-message" id="errorMessage">密码错误</div>
+                    </form>
+                </div>
+            </div>
+            <script>
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const password = document.getElementById('password').value;
+                const errorMessage = document.getElementById('errorMessage');
+                
+                try {
+                    const response = await fetch('/api/admin/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ password })
+                    });
+                    
+                    if (response.ok) {
+                        const { token } = await response.json();
+                        localStorage.setItem('admin_token', token);
+                        window.location.href = '/admin';
+                    } else {
+                        errorMessage.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    errorMessage.style.display = 'block';
+                }
+            });
+            </script>
+        </body>
+        </html>`,
+    editor: `<!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>编辑文章 - 岩浆块的博客</title>
+            <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css" rel="stylesheet">
+            <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+            <style>
+                :root {
+                    --primary-color: #3498db;
+                    --danger-color: #e74c3c;
+                    --success-color: #2ecc71;
+                    --warning-color: #f1c40f;
+                    --text-color: #2c3e50;
+                    --text-secondary: #7f8c8d;
+                    --bg-color: #f5f6fa;
+                    --card-bg: #ffffff;
+                    --border-color: #dcdde1;
+                    --sidebar-width: 240px;
+                }
+
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                    line-height: 1.6;
+                    color: var(--text-color);
+                    background: var(--bg-color);
+                }
+
+                .admin-container {
+                    display: flex;
+                    min-height: 100vh;
+                }
+
+                .sidebar {
+                    width: var(--sidebar-width);
+                    background: var(--card-bg);
+                    border-right: 1px solid var(--border-color);
+                    padding: 2rem 0;
+                    position: fixed;
+                    height: 100vh;
+                    overflow-y: auto;
+                }
+
+                .sidebar-header {
+                    padding: 0 1.5rem 2rem;
+                    border-bottom: 1px solid var(--border-color);
+                }
+
+                .sidebar-title {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: var(--text-color);
+                    margin-bottom: 0.5rem;
+                }
+
+                .sidebar-subtitle {
+                    font-size: 0.875rem;
+                    color: var(--text-secondary);
+                }
+
+                .nav-menu {
+                    padding: 1.5rem 0;
+                }
+
+                .nav-item {
+                    padding: 0.75rem 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    color: var(--text-color);
+                    text-decoration: none;
+                    transition: all 0.2s;
+                }
+
+                .nav-item:hover,
+                .nav-item.active {
+                    background: var(--bg-color);
+                    color: var(--primary-color);
+                }
+
+                .nav-item i {
+                    margin-right: 0.75rem;
+                    font-size: 1.25rem;
+                }
+
+                .main-content {
+                    flex: 1;
+                    margin-left: var(--sidebar-width);
+                    padding: 2rem;
+                }
+
+                .page-header {
+                    margin-bottom: 2rem;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .page-title {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                }
+
+                .editor-container {
+                    background: var(--card-bg);
+                    border-radius: 0.5rem;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    padding: 1.5rem;
+                }
+
+                .form-group {
+                    margin-bottom: 1.5rem;
+                }
+
+                .form-label {
+                    display: block;
+                    margin-bottom: 0.5rem;
+                    font-weight: 500;
+                }
+
+                .form-input {
+                    width: 100%;
+                    padding: 0.5rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 0.375rem;
+                    font-size: 0.875rem;
+                }
+
+                .form-input:focus {
+                    outline: none;
+                    border-color: var(--primary-color);
+                }
+
+                .tag-input {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.5rem;
+                    padding: 0.5rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 0.375rem;
+                    min-height: 2.5rem;
+                }
+
+                .tag {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0.25rem 0.5rem;
+                    background: var(--bg-color);
+                    border-radius: 0.25rem;
+                    font-size: 0.75rem;
+                }
+
+                .tag i {
+                    margin-left: 0.25rem;
+                    cursor: pointer;
+                }
+
+                .tag-input input {
+                    border: none;
+                    outline: none;
+                    padding: 0.25rem;
+                    font-size: 0.875rem;
+                    flex: 1;
+                }
+
+                .btn-group {
+                    display: flex;
+                    gap: 1rem;
+                    margin-top: 2rem;
+                }
+
+                .btn {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.375rem;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 0.875rem;
+                    transition: all 0.2s;
+                }
+
+                .btn i {
+                    margin-right: 0.5rem;
+                }
+
+                .btn-primary {
+                    background: var(--primary-color);
+                    color: white;
+                }
+
+                .btn-primary:hover {
+                    opacity: 0.9;
+                }
+
+                .btn-secondary {
+                    background: var(--bg-color);
+                    color: var(--text-color);
+                }
+
+                .btn-secondary:hover {
+                    background: var(--border-color);
+                }
+
+                .CodeMirror {
+                    height: 500px !important;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="admin-container">
+                <aside class="sidebar">
+                    <div class="sidebar-header">
+                        <h1 class="sidebar-title">博客管理系统</h1>
+                        <p class="sidebar-subtitle">管理你的博客内容</p>
+                    </div>
+                    <nav class="nav-menu">
+                        <a href="/admin" class="nav-item">
+                            <i class="ri-dashboard-line"></i>
+                            仪表盘
+                        </a>
+                        <a href="/admin/posts" class="nav-item active">
+                            <i class="ri-article-line"></i>
+                            文章管理
+                        </a>
+                        <a href="/admin/categories" class="nav-item">
+                            <i class="ri-folder-line"></i>
+                            分类管理
+                        </a>
+                        <a href="/admin/tags" class="nav-item">
+                            <i class="ri-price-tag-line"></i>
+                            标签管理
+                        </a>
+                        <a href="/admin/settings" class="nav-item">
+                            <i class="ri-settings-line"></i>
+                            网站设置
+                        </a>
+                        <a href="javascript:void(0)" onclick="logout()" class="nav-item">
+                            <i class="ri-logout-box-line"></i>
+                            退出登录
+                        </a>
+                    </nav>
+                </aside>
+                <main class="main-content">
+                    <div class="page-header">
+                        <h2 class="page-title" id="pageTitle">新建文章</h2>
+                    </div>
+                    <div class="editor-container">
+                        <form id="postForm" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="form-label">标题</label>
+                                <input type="text" class="form-input" id="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">分类</label>
+                                <input type="text" class="form-input" id="category" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">标签</label>
+                                <div class="tag-input" id="tagInput">
+                                    <input type="text" placeholder="输入标签后按回车" id="tagInputField">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">摘要</label>
+                                <textarea class="form-input" id="excerpt" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">内容</label>
+                                <textarea id="content"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">状态</label>
+                                <select class="form-input" id="status">
+                                    <option value="published">发布</option>
+                                    <option value="draft">草稿</option>
+                                </select>
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary" onclick="savePost()">
+                                    <i class="ri-save-line"></i>
+                                    保存
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='/admin/posts'">
+                                    <i class="ri-arrow-left-line"></i>
+                                    返回
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </main>
+            </div>
+            <script>
+            // 检查登录状态
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                window.location.href = '/admin/login';
+            }
+
+            let editor;
+            let tags = [];
+            let postId = null;
+
+            // 初始化编辑器
+            document.addEventListener('DOMContentLoaded', () => {
+                editor = new EasyMDE({
+                    element: document.getElementById('content'),
+                    spellChecker: false,
+                    autosave: {
+                        enabled: true,
+                        uniqueId: 'blogPost'
+                    }
+                });
+
+                // 获取文章ID
+                const urlParams = new URLSearchParams(window.location.search);
+                postId = urlParams.get('id');
+
+                if (postId) {
+                    document.getElementById('pageTitle').textContent = '编辑文章';
+                    loadPost(postId);
+                }
+
+                // 监听标签输入
+                document.getElementById('tagInputField').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const value = e.target.value.trim();
+                        if (value && !tags.includes(value)) {
+                            tags.push(value);
+                            renderTags();
+                        }
+                        e.target.value = '';
+                    }
+                });
+            });
+
+            // 渲染标签
+            function renderTags() {
+                const tagInput = document.getElementById('tagInput');
+                const inputField = document.getElementById('tagInputField');
+                const tagElements = tags.map(tag => \`
+                    <span class="tag">
+                        \${tag}
+                        <i class="ri-close-line" onclick="removeTag('\${tag}')"></i>
+                    </span>
+                \`).join('');
+                
+                tagInput.innerHTML = tagElements;
+                tagInput.appendChild(inputField);
+            }
+
+            // 移除标签
+            function removeTag(tag) {
+                tags = tags.filter(t => t !== tag);
+                renderTags();
+            }
+
+            // 加载文章
+            async function loadPost(id) {
+                try {
+                    const response = await fetch(\`/api/posts/\${id}\`);
+                    if (!response.ok) throw new Error('Failed to fetch post');
+                    const post = await response.json();
+
+                    document.getElementById('title').value = post.title;
+                    document.getElementById('category').value = post.category || '';
+                    document.getElementById('excerpt').value = post.excerpt || '';
+                    document.getElementById('status').value = post.status || 'published';
+                    editor.value(post.content || '');
+                    
+                    if (Array.isArray(post.tags)) {
+                        tags = post.tags;
+                        renderTags();
+                    }
+                } catch (error) {
+                    console.error('Error loading post:', error);
+                    alert('加载文章失败');
+                }
+            }
+
+            // 保存文章
+            async function savePost() {
+                const data = {
+                    title: document.getElementById('title').value,
+                    category: document.getElementById('category').value,
+                    excerpt: document.getElementById('excerpt').value,
+                    content: editor.value(),
+                    status: document.getElementById('status').value,
+                    tags
+                };
+
+                try {
+                    const url = postId ? \`/api/admin/posts/\${postId}\` : '/api/admin/posts';
+                    const method = postId ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': \`Bearer \${token}\`
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!response.ok) throw new Error('Failed to save post');
+                    
+                    window.location.href = '/admin/posts';
+                } catch (error) {
+                    console.error('Error saving post:', error);
+                    alert('保存文章失败');
+                }
+            }
+
+            // 退出登录
+            function logout() {
+                localStorage.removeItem('admin_token');
+                window.location.href = '/admin/login';
+            }
+            </script>
         </body>
         </html>`
 };

@@ -104,4 +104,10 @@ export class Post {
         
         return result.changes > 0;
     }
+
+    static async delete(db, id) {
+        const stmt = db.prepare('DELETE FROM posts WHERE id = ?');
+        const result = await stmt.bind(id).run();
+        return result.success;
+    }
 }

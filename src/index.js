@@ -3,14 +3,101 @@ import { cors } from 'hono/cors';
 import { Post } from './models/Post';
 import { marked } from 'marked';
 import { getTemplate } from './utils/template';
+import { sign, verify } from '@tsndr/cloudflare-worker-jwt';
 
 const app = new Hono();
+const ADMIN_PASSWORD = '888'; // 在生产环境中应该使用环境变量
+const JWT_SECRET = 'your-jwt-secret'; // 在生产环境中应该使用环境变量
 
 app.use('*', cors());
 
-app.get('/', (c) => c.html(getTemplate('index')));
+// 验证 JWT 中间件
+async function adminAuth(c, next) {
+    const auth = c.req.header('Authorization');
+    if (!auth || !auth.startsWith('Bearer ')) {
+        return c.json({ error: 'Unauthorized' }, 401);
+    }
 
-// API 路由
+    const token = auth.split(' ')[1];
+    try {
+        const isValid = await verify(token, JWT_SECRET);
+        if (!isValid) {
+            return c.json({ error: 'Invalid token' }, 401);
+        }
+        await next();
+    } catch (err) {
+        return c.json({ error: 'Invalid token' }, 401);
+    }
+}
+
+// 后台路由
+app.get('/admin/login', (c) => c.html(getTemplate('login')));
+app.get('/admin', (c) => c.html(getTemplate('admin')));
+app.get('/admin/', (c) => c.html(getTemplate('admin')));
+app.get('/admin/posts', (c) => c.html(getTemplate('posts')));
+app.get('/admin/posts/', (c) => c.html(getTemplate('posts')));
+app.get('/admin/posts/editor', (c) => c.html(getTemplate('editor')));
+app.get('/admin/posts/editor/', (c) => c.html(getTemplate('editor')));
+
+// 后台 API
+app.post('/api/admin/login', async (c) => {
+    const { password } = await c.req.json();
+    
+    if (password === ADMIN_PASSWORD) {
+        const token = await sign({ admin: true }, JWT_SECRET);
+        return c.json({ token });
+    }
+    
+    return c.json({ error: 'Invalid password' }, 401);
+});
+
+// 受保护的后台 API
+app.post('/api/admin/posts', adminAuth, async (c) => {
+    try {
+        const data = await c.req.json();
+        const post = new Post(c.env.DB);
+        const id = await post.create(data);
+        return c.json({ id });
+    } catch (error) {
+        console.error('Error creating post:', error);
+        return c.json({ error: error.message }, 500);
+    }
+});
+
+app.put('/api/admin/posts/:id', adminAuth, async (c) => {
+    try {
+        const id = c.req.param('id');
+        const data = await c.req.json();
+        const post = new Post(c.env.DB);
+        const success = await post.update({ id, ...data });
+        if (!success) {
+            return c.json({ error: 'Post not found' }, 404);
+        }
+        return c.json({ success: true });
+    } catch (error) {
+        console.error('Error updating post:', error);
+        return c.json({ error: error.message }, 500);
+    }
+});
+
+app.delete('/api/admin/posts/:id', adminAuth, async (c) => {
+    const id = c.req.param('id');
+    try {
+        await Post.delete(c.env.DB, id);
+        return c.json({ success: true });
+    } catch (error) {
+        return c.json({ error: error.message }, 500);
+    }
+});
+
+// 前台页面路由
+app.get('/', (c) => c.html(getTemplate('index')));
+app.get('/archives', (c) => c.html(getTemplate('archives')));
+app.get('/categories', (c) => c.html(getTemplate('categories')));
+app.get('/tags', (c) => c.html(getTemplate('tags')));
+app.get('/about', (c) => c.html(getTemplate('about')));
+
+// 前台 API 路由
 app.get('/api/posts', async (c) => {
     try {
         const posts = await Post.findAll(c.env.DB);
@@ -60,23 +147,7 @@ app.get('/api/categories/:category/posts', async (c) => {
     }
 });
 
-// 页面路由
-app.get('/archives', async (c) => {
-    return c.html(getTemplate('archives'));
-});
-
-app.get('/categories', async (c) => {
-    return c.html(getTemplate('categories'));
-});
-
-app.get('/tags', async (c) => {
-    return c.html(getTemplate('tags'));
-});
-
-app.get('/about', async (c) => {
-    return c.html(getTemplate('about'));
-});
-
+// 文章详情页
 app.get('/post/:id', async (c) => {
     try {
         const id = c.req.param('id');
@@ -123,6 +194,7 @@ app.get('/post/:id', async (c) => {
     }
 });
 
+// 标签和分类页面
 app.get('/tag/:tag', async (c) => {
     try {
         const tag = c.req.param('tag');
