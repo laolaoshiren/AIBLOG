@@ -1,5 +1,9 @@
 # CF Workers 博客系统
-
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=laolaoshiren.AIBLOG)
+![GitHub stars](https://img.shields.io/github/stars/laolaoshiren/AIBLOG?style=social)
+![GitHub forks](https://img.shields.io/github/forks/laolaoshiren/AIBLOG?style=social)
+![GitHub issues](https://img.shields.io/github/issues/laolaoshiren/AIBLOG)
+![GitHub license](https://img.shields.io/github/license/laolaoshiren/AIBLOG)
 这是一个基于 Cloudflare Workers 和 D1 数据库构建的现代化博客系统。
 
 ## 核心特性
